@@ -346,6 +346,8 @@ Streaming.RequestCollision(-535.64, -300.451)
 Streaming.LoadScene(-535.64, -300.451, 12.29)
 $PLAYER1 = Player.Create(0, 405.0, -905.0, 11.0712)
 $scplayer = Player.GetChar($PLAYER1)
+// TEMP DEBUG: remove after testing bust handling
+Player.AlterWantedLevelNoDrop($PLAYER1, 2)
 Weather.ForceNow(WeatherType.Foggy)
 wait 0
 declare_mission_flag $ONMISSION
@@ -8247,39 +8249,10 @@ else
 end
 
 :Intro_1130
-$BatBlip = Blip.AddForCoord(410.0, -860.0, 11.0712)
-Text.PrintHelp('BAT')
-$TIMER = 10000
-goto @Intro_1140
-
-:Intro_1135
-Blip.Remove($BatBlip)
-Text.ClearPrints
-goto @Intro_1130
-
-:Intro_1140
-Hud.DisplayTimer($TIMER, TimerDirection.Down)
-wait 5000
-if
-    Pickup.HasBeenCollected($GUN_BEACH1)
-then
-    play_audio_stream_2channel "Audio\SSA\WpnPick.mp3" false 0.5
-    Blip.Remove($BatBlip)
-    Text.ClearPrints
-    goto @Intro_1145
-else
-    wait 5000
-    if
-        Pickup.HasBeenCollected($GUN_BEACH1)
-    then
-        play_audio_stream_2channel "Audio/SSA/WpnPick.mp3" false 0.5
-        Blip.Remove($BatBlip)
-        Text.ClearPrints
-        goto @Intro_1145
-    else
-        goto @Intro_1135
-    end
-end
+Pickup.Remove($GUN_BEACH1)
+Player.GiveWeapon($PLAYER1, WeaponType.BaseballBat, 1)
+Player.SetCurrentWeapon($PLAYER1, WeaponType.BaseballBat)
+play_audio_stream_2channel "Audio\SSA\WpnPick.mp3" false 0.5
 
 :Intro_1145
 Text.PrintHelp('SPAZ')
@@ -8397,6 +8370,7 @@ if
     Car.IsDead($Admiral)
 then
     Player.SetControl($PLAYER1, False)
+    Hud.ClearTimer($TIMER)
     Player.AddScore($PLAYER1, 100)
     Text.PrintWithNumberBig('MISPASS', 100, 2000, TextStyle.Middle)
     Stat.RegisterMissionPassed('ITBEG')
@@ -8420,6 +8394,7 @@ else
         Car.IsInWater($Admiral)
     then
         Player.SetControl($PLAYER1, False)
+        Hud.ClearTimer($TIMER)
         Player.AddScore($PLAYER1, 100)
         Text.PrintWithNumberBig('MISPASS', 100, 2000, TextStyle.Middle)
         Stat.RegisterMissionPassed('ITBEG')
@@ -8468,16 +8443,25 @@ then
     $TIMER = 60000
     Text.Print('AD_DEAD', 5000, 0)
     Hud.DisplayTimer($TIMER, TimerDirection.Down)
-    wait 60000
-    if
-        Car.IsDead($Admiral)
-    then
-        goto @Intro_1450
-    else
-        goto @Intro_1666
-    end
+    goto @Intro_1461
 else
     goto @Intro_1450
+end
+
+:Intro_1461
+wait 250
+if
+    Car.IsDead($Admiral)
+then
+    goto @Intro_1450
+else
+    if
+        $TIMER == 0
+    then
+        goto @Intro_1666
+    else
+        goto @Intro_1461
+    end
 end
 
 :Intro_1665
@@ -8519,6 +8503,8 @@ $AdmiralBlip = Blip.AddForCoord(395.0, -906.2, 12.0)
 Blip.ChangeColor($AdmiralBlip, BlipColor.LightBlue)
 $Admiral = Car.Create(#ADMIRAL, 395.0, -880.2, 12.0)
 $SidewalkSphere  = Sphere.Create(395.0, -906.2, 12.0, 2.0)
+Pickup.Remove($GUN_BEACH1)
+$GUN_BEACH1 = Pickup.Create(#BAT, PickupType.OnStreet, 410.0, -860.0, 11.0712)
 terminate_this_script
 return
 
