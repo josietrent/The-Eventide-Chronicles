@@ -101,8 +101,8 @@ In Sanny Builder / Vice City bytecode, labels (`:Label`) are merely named memory
 | Issue ID | File & Location | Description | Recommended Remediation | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **GAP-01** | `missions/fairy.txt:3` | Mission 8 lacks function/gosub wrapper. Mid-mission death crashes engine. | Wrap body in `Fairy_Start()` and add `has_deatharrest_been_executed` handler before label. | Open |
-| **GAP-02** | `missions/endgame.txt:4` | Mission 7 does not assert `$ONMISSION = 1`. | Set `$ONMISSION = 1` on entry, wrap body in gosub, and clear `$ONMISSION = 0` on completion/failure. | Resolved |
+| **GAP-02** | `missions/endgame.txt:4` | Mission 7 does not assert `$ONMISSION = 1`. | Set `$ONMISSION = 1` on entry, wrap body in gosub, and clear `$ONMISSION = 0` on completion/failure. | Testing |
 | **GAP-03** | `missions/hell.txt:3-6` | Mission 9 is an unterminated stub; Mission 10 (`@Heaven`) is missing. | Add `terminate_this_script` to `:Hell`; add dummy `:Heaven` script with `terminate_this_script`. | Open |
 | **GAP-04** | `lib/threads/car-health.txt:43` | `while Player.IsPlaying` has no code after `end`; flagged as potential fall-through. | Add `wait 250` and `goto @VehHeal_101` after line 43. | Closed (False positive: threads do not fall through) |
-| **GAP-05** | `lib/threads/bath.txt:34` | Raw `wait 120000` with HUD timer and `$ONMISSION = 1`. | Convert to 250ms polling loop testing `$TIMER == 0` and player status; ensure `Hud.ClearTimer` and `$ONMISSION = 0` on exit. | Resolved |
+| **GAP-05** | `lib/threads/bath.txt:34` | Raw `wait 120000` with HUD timer and `$ONMISSION = 1`. | Convert to 250ms polling loop testing `$TIMER == 0` and player status; ensure `Hud.ClearTimer` and `$ONMISSION = 0` on exit. | Testing |
 | **GAP-06** | `lib/threads/bus.txt:2` | `set_deatharrest_state 0` executed in ambient script. | Remove line 2 from `lib/threads/bus.txt`. | Resolved Manually |

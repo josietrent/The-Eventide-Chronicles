@@ -1,7 +1,38 @@
 //-------------Mission 7---------------
 
 :Endgame
+Endgame_Body()
+
+:Endgame_Check
+wait 250
+if
+    has_deatharrest_been_executed
+then
+    Endgame_Cleanup()
+end
+terminate_this_script
+
+:Endgame_Cleanup
+$ONMISSION = 0
+Audio.StopEndOfGameTune()
+if
+    Char.DoesExist($EndOfGamePed)
+then
+    Char.Delete($EndOfGamePed)
+end
+if
+    not Car.IsDead($Sabre)
+then
+    Car.Delete($Sabre)
+end
+Streaming.MarkModelAsNoLongerNeeded(#SABRE)
+Streaming.MarkModelAsNoLongerNeeded(#WFYG1)
+Player.SetControl($PLAYER1, True)
+return
+
+:Endgame_Body
 script_name 'Endgame'
+$ONMISSION = 1
 
 :Endgame_LoadModels
 wait 250
@@ -81,7 +112,6 @@ while not Car.IsStoppedInArea2D($Sabre, 235.4, -1275.2, 245.6, -1285.6, False)
 end
 
 :Endgame_ResetCutscene
-$ONMISSION = 0
 Camera.DoFade(1500, Fade.Out)
 wait 1500
 if
@@ -97,6 +127,7 @@ then
 end
 
 Char.SetCoordinates($scplayer, -535.6, -325.521, 13.56)
+$ONMISSION = 1
 goto @Endgame_LoadModels
 
 :Endgame_Finish

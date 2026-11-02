@@ -31,7 +31,22 @@ Text.PrintHelpString("I'd be on the lookout for golf-ball sized hail or a biblic
 wait 5000
 Text.PrintHelpString("Maybe next time, you'll think twice before trespassing, eh?")
 Hud.DisplayTimer($TIMER, TimerDirection.Down)
-wait 120000
+
+:Bath_TimerLoop
+wait 250
+if
+    not Player.IsPlaying($PLAYER1)
+then
+    goto @Bath_Exit
+end
+if
+    $TIMER == 0
+then
+    goto @Bath_Exit
+end
+goto @Bath_TimerLoop
+
+:Bath_Exit
 Hud.ClearTimer($TIMER)
 $ONMISSION = 0
 Weather.SetAllowHurricanes(True)
